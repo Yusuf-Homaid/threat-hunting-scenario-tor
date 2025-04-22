@@ -43,34 +43,45 @@
 // Installer name == tor-browser-windows-x86_64-portable-(version).exe
 // Detect the installer being downloaded
 DeviceFileEvents
-| where FileName startswith "tor"
+| where FileName startswith "tor" and DeviceName contains "yusuf"
+
 
 // TOR Browser being silently installed
-
 DeviceProcessEvents
-| where ProcessCommandLine contains "tor-browser-windows-x86_64-portable-14.0.1.exe  /S"
+| where ProcessCommandLine contains "tor-browser-windows-x86_64-portable-14.5.exe  /S"
 | project Timestamp, DeviceName, ActionType, FileName, ProcessCommandLine
+|where DeviceName contains "yusuf"
 
 // TOR Browser or service was successfully installed and is present on the disk
 DeviceFileEvents
 | where FileName has_any ("tor.exe", "firefox.exe")
 | project  Timestamp, DeviceName, RequestAccountName, ActionType, InitiatingProcessCommandLine
+|where DeviceName contains "yusuf"
+
 
 // TOR Browser or service was launched
 DeviceProcessEvents
 | where ProcessCommandLine has_any("tor.exe","firefox.exe")
 | project  Timestamp, DeviceName, AccountName, ActionType, ProcessCommandLine
+| where DeviceName contains "yusuf"
 
 // TOR Browser or service is being used and is actively creating network connections
 DeviceNetworkEvents
 | where InitiatingProcessFileName in~ ("tor.exe", "firefox.exe")
 | where RemotePort in (9001, 9030, 9040, 9050, 9051, 9150)
+| where DeviceName contains "yusuf"
 | project Timestamp, DeviceName, InitiatingProcessAccountName, InitiatingProcessFileName, RemoteIP, RemotePort, RemoteUrl
 | order by Timestamp desc
 
+DeviceFileEvents
+| where FileName has_any ("tor.exe", "firefox.exe")
+| project  Timestamp, DeviceName, RequestAccountName, ActionType, InitiatingProcessCommandLine
+|where DeviceName contains "yusuf"
+
 // User shopping list was created and, changed, or deleted
 DeviceFileEvents
-| where FileName contains "shopping-list.txt"
+| where FileName contains "Tor-Shopping-list.txt.txt" 
+| where DeviceName contains "yusuf"
 ```
 
 ---
